@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VOV-PS - Dashboard</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    /* Animasi Fade-in */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeIn 0.8s ease-out; }
+
+    /* Background transparan lebih halus */
+    .dashboard-bg {
+      background-image: url('https://vault.pictures/media/images/0e/e5/93/0ee593d4626a4662a450433fb6273fb6.jpg'); 
+      background-size: cover; 
+      background-position: center; 
+      background-repeat: no-repeat;
+      background-color: rgba(43, 77, 109, 0.6);
+    }
+
+    /* Logo Growtopia */
+    .logo {
+      width: 300px; 
+      height: 100px;
+      margin: 10px auto;
+      background-image: url('https://s3.eu-west-1.amazonaws.com/cdn.growtopiagame.com/website/resources/assets/images/logo_header.png'); 
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    body {
+    background-color: rgba(0, 0, 0, 0.5); /* Setengah transparan (ubah angka 0.5 sesuai keinginan) */
+}
+  </style>
+</head>
+
+<body class="flex items-center justify-center h-screen bg-transparent">
+
+  <!-- Container Utama -->
+  <div id="dashboard" class="dashboard-bg border-4 border-[#87b8cc] shadow-lg p-6 w-full max-w-md rounded-lg opacity-0">
+
+    <!-- Logo Growtopia -->
+    <div class="logo"></div>
+
+    <!-- Error Message -->
+    <div id="errorDiv" class="hidden text-xs text-red-700 font-bold text-center mt-2 bg-transparent rounded">
+      <a id="errorMessage"></a>
+    </div>
+
+    <!-- Form Login -->
+    <form method="post" action="/player/growid/login/validate" accept-charset="UTF-8" id="loginForm" class="mt-3">
+
+      <div class="mb-3">
+        <label for="loginGrowId" class="text-red-800 text-sm">Username:</label>
+        <div class="flex items-center border-2 border-gray-500 rounded px-2 py-1">
+          <i class="fas fa-user text-white mr-2"></i>
+          <input type="text" name="growId" id="loginGrowId" class="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none" placeholder="Enter your GrowID" />
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="loginPassword" class="text-red-800 text-sm">Password:</label>
+        <div class="flex items-center border-2 border-gray-500 rounded px-2 py-1">
+          <i class="fas fa-lock text-white mr-2"></i>
+          <input type="password" name="password" id="loginPassword" class="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none" placeholder="Enter your password" />
+          <button type="button" id="toggleLogPassword" class="text-white focus:outline-none">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tombol Login/Register -->
+      <div class="flex justify-between mt-3">
+        <button id="loginButton" class="w-1/2 py-2 bg-red-700 text-white text-lg font-bold rounded-lg border-2 border-gray-300 shadow-md hover:bg-blue-500 hover:border-white transition transform hover:scale-110 active:scale-100 focus:ring-4 focus:ring-blue-300">
+  Login
+</button>
+<button id="RegisterButton" class="w-1/2 py-2 bg-red-700 text-white text-lg font-bold rounded-lg border-2 border-gray-300 shadow-md hover:bg-blue-500 hover:border-white transition transform hover:scale-110 active:scale-100 focus:ring-4 focus:ring-blue-300">
+  Register
+</button>
+        </button>
+      </div>
+    </form>
+
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Animasi GSAP
+    gsap.fromTo("#dashboard", { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 1.5, ease: "expo.out" });
+
+    // Simpan username jika pernah login sebelumnya
+    document.addEventListener('DOMContentLoaded', function () {
+      const storedGrowId = localStorage.getItem('growId');
+      if (storedGrowId) {
+        document.getElementById('loginGrowId').value = storedGrowId;
+      }
+    });
+
+    // Validasi Login
+    document.getElementById('loginButton').addEventListener('click', function (event) {
+      event.preventDefault();
+      const uName = document.getElementById('loginGrowId').value;
+      const uPass = document.getElementById('loginPassword').value;
+      const errorDiv = document.getElementById('errorDiv');
+      const errorMessage = document.getElementById('errorMessage');
+
+      if (!uName || !uPass) {
+        errorDiv.classList.remove('hidden');
+        errorMessage.innerHTML = 'Username or Password is empty';
+      } else if (uName.length < 2 || uPass.length < 2) {
+        errorDiv.classList.remove('hidden');
+        errorMessage.innerHTML = 'Username or Password must be at least 2 characters long';
+      } else {
+        localStorage.setItem('growId', uName);
+        document.getElementById('loginForm').submit();
+      }
+    });
+
+    // Toggle Show/Hide Password
+    document.getElementById('toggleLogPassword').addEventListener('click', function () {
+      const LpasswordField = document.getElementById('loginPassword');
+      if (LpasswordField.type === 'password') {
+        LpasswordField.type = 'text';
+        this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+      } else {
+        LpasswordField.type = 'password';
+        this.innerHTML = '<i class="fas fa-eye"></i>';
+      }
+    });
+  </script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Pastikan form login muncul dengan fade-in
+    $("#loginForm").hide().fadeIn(500);
+
+    // Jika ada bug tampilan, refresh elemen login
+    setTimeout(() => {
+      $("#loginForm").css("opacity", "1");
+    }, 300);
+  });
+</script>
+</body>
+
+</html>
